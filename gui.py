@@ -1,0 +1,1 @@
+from classes.main import LISTOFPRODUCTS
