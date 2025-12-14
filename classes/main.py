@@ -5,24 +5,39 @@ class Product:
         self.prod_price = prod_price
         self.prod_desc = prod_desc
 
-# """
-#     id : {
-#         obj : object,
-#         Qu:
-#     }
 
-# """
 class Cart:
     def __init__(self):
+    #     id : {
+    #         obj : object,
+    #         Quantity : int
+    #     }
         self.items = {}
+        self.total = 0
 
     def getCart(self):
-        ...
+        return self.items, self.total
 
     def addProduct(self, prod: Product, quantity: int = 1):
-        ...
+        if prod.id in self.items.keys():
+            self.items[prod.id]['quantity'] += 1
+
+        else:
+            self.items[prod.id] = {'obj': prod, "quantity": quantity}
+
+        self.update_total()
 
     def removeProduct(self, prod: Product, quantity: int = 1):
+
+        if prod.id in self.items.keys():
+            self.items[prod.id]['quantity'] -= 1
+
+            if self.items[prod.id]['quantity'] <= 0:
+                self.items.pop(prod.id)
+
+        self.update_total()
+
+    def update_total(self):
         ...
 
     def checkout(self):
@@ -31,5 +46,9 @@ class Cart:
         ...
 
 LISTOFPRODUCTS = [
-    Product
+    Product(101, "Milk", 300, "1L of milk."),
+    Product(102, "Bread", 250, "White bread loaf."),
+    Product(103, "Eggs", 450, "12 eggs."),
+    Product(104, "Butter", 500, "Butter stick."),
+    Product(106, "Soap", 199, "Hand soap.")
 ]
