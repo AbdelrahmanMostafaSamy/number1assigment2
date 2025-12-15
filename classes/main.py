@@ -129,7 +129,7 @@ class Cart:
         msgs.append(f"-" * 60)
 
         # Add the header of the table. 
-        msgs.append("{:<5}{:<8}{:<6}{:<10}{:<10}{:<20}".format("Id", "Name", "Price", "Quantity", "Total", "Desc"))
+        msgs.append("{:<8}{:<6}{:<10}{:<10}{:<20}".format("Name", "Price", "Quantity", "Total", "Desc"))
 
 
         for id in self.items:
@@ -144,13 +144,13 @@ class Cart:
             total_salary_of_receive += total_salary
             
             # append every row in the receipt.
-            msgs.append(f"{id:<5}{name:<8}{str(price)+"$":<6}{quantity:<10}{total_salary:<10}{desc:<20}")
+            msgs.append(f"{name:<8}{str(price)+"$":<6}{quantity:<10}{total_salary:<10}{desc:<20}")
         
         # add separator.
         msgs.append(f"-" * 60)
         
         # add the final total of receipt.
-        msgs.append("{:<29}{}".format("Final Total", total_salary_of_receive))
+        msgs.append("{:<24}{}".format("Final Total", total_salary_of_receive))
         
         # return the data.
         return msgs 
