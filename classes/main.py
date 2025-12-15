@@ -1,5 +1,6 @@
 from random import randint
 from datetime import datetime
+
 class Product:
     def __init__(self, prod_id: int, prod_name: str, prod_price: int, prod_desc: str)-> None:
         self.id = prod_id
@@ -49,17 +50,55 @@ class Cart:
 
             idata["itemtotal"] = itemtotal
             carttotal += itemtotal
-            
-    def saveReceipt(self):
+    
+    def __is_Serial_available(self) -> bool:
+        
+        """
+        
+            Search in the json file that have all serial numbers
+            if the serial is --> found in json file return --> False
+            if not found return --> True 
+
+        """
+        # self.serial_number
+
+        return True
         ...
+
+
+    def saveReceipt(self) -> None:
+        """
+            Docstring for saveReceipt.
+
+            :param self: instance attribute
+            :return: No return.
+
+            This function is created to save the receipt.
+        """
+        # get the data from the checkout.
+        data = self.checkout()
+
+        # get date with another format
+        date = datetime.now().strftime("%d %b %Y")
+        
+        # create a txt file that have a receipt.
+        with open(f"receipts/receipt_{self.serial_number}_{date}_.txt", 'w') as receipt:
+            
+            # Put the data into the file.
+            for line in data:
+                receipt.write(line + "\n")
+
+            # close the file.
+            receipt.close()
+
 
     def checkout(self) -> list:
         """
-        Docstring for checkout
-        
-        :param self: instance attribute
-        :return: list of all statement in the receipt 
-        :return type: list
+            Docstring for checkout
+            
+            :param self: instance attribute
+            :return: list of all statement in the receipt 
+            :return type: list
         """
         # list to strore all Statement.
         msgs = []
@@ -68,7 +107,11 @@ class Cart:
         total_salary_of_receive = 0
 
         # generate random number to serial.
-        random_number = randint(0, 100000000)
+        self.serial_number = randint(0, 100000000) 
+
+        # still generate numbers until find a new serial number.
+        while not self.__is_Serial_available():
+            self.serial_number = randint(0, 100000000)
 
         # get the date.
         date = datetime.now().strftime("%A, %d-%B-%Y")
@@ -80,7 +123,7 @@ class Cart:
         msgs.append(f"-" * 60)
 
         # append the basic information about the receipt.
-        msgs.append(f"Super Market Receipt\nSerial Number: {random_number}\nDate: {date}\nTime: {time}")
+        msgs.append(f"Super Market Receipt\nSerial Number: {self.serial_number}\nDate: {date}\nTime: {time}")
         
         # add separator. 
         msgs.append(f"-" * 60)
@@ -120,4 +163,13 @@ LISTOFPRODUCTS = [
     Product(104, "Butter", 500, "Butter stick."),
     Product(106, "Soap", 199, "Hand soap.")
 ]
+
+
+my_cart = Cart()
+my_cart.addProduct(LISTOFPRODUCTS[0], 100)
+my_cart.addProduct(LISTOFPRODUCTS[2], 150)
+my_cart.addProduct(LISTOFPRODUCTS[3], 300)
+my_cart.addProduct(LISTOFPRODUCTS[1], 200)
+
+my_cart.saveReceipt()
 
