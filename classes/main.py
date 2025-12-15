@@ -165,11 +165,11 @@ LISTOFPRODUCTS = [
 ]
 
 
-my_cart = Cart()
-my_cart.addProduct(LISTOFPRODUCTS[0], 100)
-my_cart.addProduct(LISTOFPRODUCTS[2], 150)
-my_cart.addProduct(LISTOFPRODUCTS[3], 300)
-my_cart.addProduct(LISTOFPRODUCTS[1], 200)
+# my_cart = Cart()
+# my_cart.addProduct(LISTOFPRODUCTS[0], 100)
+# my_cart.addProduct(LISTOFPRODUCTS[2], 150)
+# my_cart.addProduct(LISTOFPRODUCTS[3], 300)
+# my_cart.addProduct(LISTOFPRODUCTS[1], 200)
 
-my_cart.saveReceipt()
+# my_cart.saveReceipt()
 
