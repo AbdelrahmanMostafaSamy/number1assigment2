@@ -178,7 +178,7 @@ class Cart:
     #     id : {
     #         obj        : object,
     #         quantity   : int
-    #         item_total  : int
+    #         itemtotal  : int
     #     }
         self.items = {}
         self.total = 0
@@ -208,22 +208,17 @@ class Cart:
         self.update_total()
 
     def update_total(self):
-        cart_total = 0
+        carttotal = 0
 
         for iid, idata in self.items.items():
-            item_total = idata['obj'].price * idata['quantity']
+            itemtotal = idata['obj'].price * idata['quantity']
 
-<<<<<<< HEAD
             idata["itemtotal"] = itemtotal
             carttotal += itemtotal
 
         # store the computed total on the cart
         self.total = carttotal
         return self.total
-=======
-            idata["item_total"] = item_total
-            cart_total += item_total
->>>>>>> 1513dea5a464dfa52c0a85647bb7a643f6235a74
     
     def __is_Serial_available(self) -> bool:
         
@@ -330,13 +325,13 @@ class Cart:
         return msgs 
 
 
-# LISTOFPRODUCTS = [
-#     Product(101, "Milk", 300, "1L of milk."),
-#     Product(102, "Bread", 250, "White bread loaf."),
-#     Product(103, "Eggs", 450, "12 eggs."),
-#     Product(104, "Butter", 500, "Butter stick."),
-#     Product(106, "Soap", 199, "Hand soap.")
-# ]
+LISTOFPRODUCTS = [
+    Product(101, "Milk", 300, "1L of milk."),
+    Product(102, "Bread", 250, "White bread loaf."),
+    Product(103, "Eggs", 450, "12 eggs."),
+    Product(104, "Butter", 500, "Butter stick."),
+    Product(106, "Soap", 199, "Hand soap.")
+]
 
 
 # my_cart = Cart()
