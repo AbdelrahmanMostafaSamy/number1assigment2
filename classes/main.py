@@ -336,19 +336,19 @@ class Cart:
 
 # my_cart.saveReceipt()
 
-my_stock = Stock()
-my_stock.addProductToStock(Product(106, "Soap", 199, "Hand soap."), 30)
-my_stock.deleteFromStock(1000)
-my_stock.updateProduct(103, "Chipes", 350, "Lol")
+# my_stock = Stock()
+# my_stock.addProductToStock(Product(106, "Soap", 199, "Hand soap."), 30)
+# my_stock.deleteFromStock(1000)
+# my_stock.updateProduct(103, "Chipes", 350, "Lol")
 
-print(my_stock.set_quantity(106, 150))
-print(my_stock.get_quantity(106))
+# print(my_stock.set_quantity(106, 150))
+# print(my_stock.get_quantity(106))
 
 
-for key, value in my_stock.products.items():
-    print(f"{key} : ==>", end="")
-    for key_, value_ in value.items():
-        print(f"{key_}: {value_.name} <--> {value_.price}  <--> {value_.desc}")
-        break
+# for key, value in my_stock.products.items():
+#     print(f"{key} : ==>", end="")
+#     for key_, value_ in value.items():
+#         print(f"{key_}: {value_.name} <--> {value_.price}  <--> {value_.desc}")
+#         break
 
 
