@@ -9,7 +9,6 @@ class Product:
         self.desc   = prod_desc
 
 
-
 class Stock:
     def __init__(self):
         """
@@ -134,7 +133,7 @@ class Stock:
             # False if the process has finished with failed.
             return False
 
-    def get_quantity(self, id_of_product: int) -> int:
+    def getQuantity(self, id_of_product: int) -> int:
         """
         Docstring for get_quantity
         
@@ -152,7 +151,7 @@ class Stock:
             # if I don't it return -1.
             return -1
         
-    def set_quantity(self, id_of_product: int, new_quantity: int) -> bool:
+    def setQuantity(self, id_of_product: int, new_quantity: int) -> bool:
         """
         Docstring for set_quantity
         
@@ -173,12 +172,13 @@ class Stock:
             # if I don't have it return false.
             return False
         
+
 class Cart:
     def __init__(self):
     #     id : {
     #         obj        : object,
     #         quantity   : int
-    #         itemtotal  : int
+    #         item_total  : int
     #     }
         self.items = {}
         self.total = 0
@@ -188,7 +188,6 @@ class Cart:
 
     def addProduct(self, prod: Product, quantity: int = 1):
         if prod.id in self.items.keys():
-            # increase by the requested quantity (not just 1)
             self.items[prod.id]['quantity'] += quantity
 
         else:
@@ -208,16 +207,15 @@ class Cart:
         self.update_total()
 
     def update_total(self):
-        carttotal = 0
+        cart_total = 0
 
         for iid, idata in self.items.items():
-            itemtotal = idata['obj'].price * idata['quantity']
+            item_total = idata['obj'].price * idata['quantity']
 
-            idata["itemtotal"] = itemtotal
-            carttotal += itemtotal
+            self.items[iid]['item_total'] = item_total
+            cart_total += item_total
 
-        # store the computed total on the cart
-        self.total = carttotal
+        self.total = cart_total
         return self.total
     
     def __is_Serial_available(self) -> bool:
@@ -325,13 +323,13 @@ class Cart:
         return msgs 
 
 
-LISTOFPRODUCTS = [
-    Product(101, "Milk", 300, "1L of milk."),
-    Product(102, "Bread", 250, "White bread loaf."),
-    Product(103, "Eggs", 450, "12 eggs."),
-    Product(104, "Butter", 500, "Butter stick."),
-    Product(106, "Soap", 199, "Hand soap.")
-]
+# LISTOFPRODUCTS = [
+#     Product(101, "Milk", 300, "1L of milk."),
+#     Product(102, "Bread", 250, "White bread loaf."),
+#     Product(103, "Eggs", 450, "12 eggs."),
+#     Product(104, "Butter", 500, "Butter stick."),
+#     Product(106, "Soap", 199, "Hand soap.")
+# ]
 
 
 # my_cart = Cart()
@@ -356,5 +354,4 @@ LISTOFPRODUCTS = [
 #     for key_, value_ in value.items():
 #         print(f"{key_}: {value_.name} <--> {value_.price}  <--> {value_.desc}")
 #         break
-
 
