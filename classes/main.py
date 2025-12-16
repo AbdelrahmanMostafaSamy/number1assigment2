@@ -213,17 +213,11 @@ class Cart:
         for iid, idata in self.items.items():
             item_total = idata['obj'].price * idata['quantity']
 
-<<<<<<< HEAD
-            idata["itemtotal"] = itemtotal
-            carttotal += itemtotal
-
-        # store the computed total on the cart
-        self.total = carttotal
-        return self.total
-=======
-            idata["item_total"] = item_total
+            self.items[iid]['item_total'] = item_total
             cart_total += item_total
->>>>>>> 1513dea5a464dfa52c0a85647bb7a643f6235a74
+
+        self.total = cart_total
+        return self.total
     
     def __is_Serial_available(self) -> bool:
         
