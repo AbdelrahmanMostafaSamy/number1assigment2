@@ -177,7 +177,7 @@ class Stock:
         else:
             # if I don't have it return false.
             return False
-        
+            
 
 class Cart:
     def __init__(self):
@@ -247,7 +247,6 @@ class Cart:
         """
 
 
-        # get date with another format
         date = datetime.now().strftime("%d %b %Y")
         
         # create a txt file that have a receipt.
@@ -256,23 +255,23 @@ class Cart:
             for line in msgs:
                 receipt.write(line + "\n")
         
-        #save history to json
-        fp = open("classes/data.json", "r+")
-        jdata = json.load(fp)
 
-        items = []
+        #save history to json
+        with open("classes/data.json", "r+") as fp:
+            jdata = json.load(fp)
+
+        historyitems = []
         for i in self.items.values():
             prod = i['obj'].getJson()
             prod.update({'quantity': i['quantity'], 'item_total': i['item_total']})
 
-            items.append(prod)
+            historyitems.append(prod)
 
-        jdata['history'][serial_number] = items
+        jdata['history'][serial_number] = historyitems
 
-        fp.seek(0)
-        json.dump(jdata, fp)
-        fp.truncate()
-        fp.close()
+        with open("classes/data.json", "w") as fp:
+            json.dump(jdata, fp)
+
             
 
     def checkout(self) -> list:
