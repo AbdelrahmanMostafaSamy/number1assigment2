@@ -1,0 +1,11 @@
+------------------------------------------------------------
+Super Market Receipt
+Serial Number: 36731773
+Date: Thursday, 18-December-2025
+Time: 10:39:24 PM
+------------------------------------------------------------
+Name    Price Quantity  Total     Desc                
+cola    1$    5         5         soda                
+milk    50$   2         100       noor                
+------------------------------------------------------------
+Final Total             105

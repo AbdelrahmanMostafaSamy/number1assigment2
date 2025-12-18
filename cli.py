@@ -88,38 +88,34 @@ def delete_from_cart():
 
 
 
-#Save resed 
-"""
-funciton checkout cart
-"""
-
-
-
+def prints():
+    while True:
+        print("\n__________M A I N   M E N U__________")
+        print("1. Add product to store")
+        print("2. Display products in store")
+        print("3. Add product to cart")
+        print("4. Delete product from cart")
+        print("5. Checkout")
+        print("6. Exit")
+        choice = input("Enter your choice: ")
+        if choice == "1":
+            add_products()
+        elif choice == "2":
+            display_products()
+        elif choice == "3":
+            while True:
+                if not add_to_cart():
+                    break
+        elif choice == "4":
+            delete_from_cart()
+        elif choice == "5":
+            cart.checkout()
+        elif choice == "6":
+            print("Exiting...")
+            break
+        else:
+            print("Invalid choice, please try again.")
+    
 
 # Main loop
-while True:
-    print("\n__________M A I N  M E N U__________")
-    print("1. Add product to store")
-    print("2. Display products in store")
-    print("3. Add product to cart")
-    print("4. Delete product from cart")
-    print("5. View cart")
-    print("7. Exit")
-    choice = input("Enter your choice: ")
-    if choice == "1":
-        add_products()
-    elif choice == "2":
-        display_products()
-    elif choice == "3":
-        while True:
-            if not add_to_cart():
-                break
-    elif choice == "4":
-        delete_from_cart()
-    elif choice == "5":
-        cart.checkout()
-    elif choice == "7":
-        print("Exiting...")
-        break
-    else:
-        print("Invalid choice, please try again.")
+prints()
