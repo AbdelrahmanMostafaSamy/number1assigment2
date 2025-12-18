@@ -1,141 +1,132 @@
 import customtkinter as ctk
-from tkinter import ttk
-from classes.main import Cart, LISTOFPRODUCTS
-# Colors config
-C_SIDE = "#1B4D3E"  # Dark Green
-C_BG = "#F2F0E4"    # Beige
-C_ACCENT = "#E6A526" # Orange
+import main as m
 
-ctk.set_appearance_mode("Light")
-ctk.set_default_color_theme("green")
-
-class SupermarketGUI(ctk.CTk):
+class SuperMarketGUI(ctk.CTk):
     def __init__(self):
         super().__init__()
-        
-        # window setup
-        self.title("Supermarket System")
-        self.geometry("1100x700")
+        self.title("Super Market")
+        self.geometry("1200x750")
         self.resizable(False, False)
+        ctk.set_appearance_mode("dark")
 
-        self.cart = Cart() # call backend class
+        self.cart_logic = m.Cart()
+        self.cart_rows = {}
 
-        # grid layout 
-        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(0, weight=1) 
+        self.grid_columnconfigure(1, weight=0) 
         self.grid_rowconfigure(0, weight=1)
 
-        self.setup_ui()
-        self.load_products()
-
-    def setup_ui(self):
-        # 1. Sidebar Frame
-        self.side_fr = ctk.CTkFrame(self, width=200, corner_radius=0, fg_color=C_SIDE)
-        self.side_fr.grid(row=0, column=0, sticky="nsew")
-
-        lbl = ctk.CTkLabel(self.side_fr, text="التوحيد و النور", font=ctk.CTkFont(size=25, weight="bold"), text_color="white")
-        lbl.pack(pady=30)
+        # --- LEFT SIDE ---
+        self.main_container = ctk.CTkFrame(self, fg_color="#D9D9D9", corner_radius=16)
+        self.main_container.grid(row=0, column=0, sticky="nsew")
         
-        # menu buttons
-        btns = ["Invoice", "Add Items", "History"]
-        for b_text in btns:
-            btn = ctk.CTkButton(self.side_fr, text=b_text, fg_color="transparent", hover_color="#143A2F", anchor="w", height=40)
-            btn.pack(fill="x", padx=10, pady=5)
-
-        # exit button
-        ext_btn = ctk.CTkButton(self.side_fr, text="End Shift", fg_color="#922B21", hover_color="#641E16", anchor="w", command=self.destroy)
-        ext_btn.pack(fill="x", padx=10, pady=20, side="bottom")
-
-        # 2. Main Center Area
-        self.main_fr = ctk.CTkFrame(self, corner_radius=0, fg_color=C_BG)
-        self.main_fr.grid(row=0, column=1, sticky="nsew")
-
-        # input row
-        in_fr = ctk.CTkFrame(self.main_fr, fg_color="transparent")
-        in_fr.pack(fill="x", padx=20, pady=20)
-
-        self.prod_var = ctk.StringVar(value="Select Product")
-        self.combo = ctk.CTkOptionMenu(in_fr, variable=self.prod_var, fg_color="white", text_color="black", button_color=C_ACCENT, button_hover_color="#C58B1F")
-        self.combo.pack(side="left", fill="x", expand=True, padx=(0,10))
-
-        add = ctk.CTkButton(in_fr, text="+ Add", fg_color=C_ACCENT, text_color="black", font=ctk.CTkFont(weight="bold"), command=self.add_item)
-        add.pack(side="right")
-
-        # Table area
-        tbl_fr = ctk.CTkFrame(self.main_fr, fg_color="transparent")
-        tbl_fr.pack(fill="both", expand=True, padx=20)
+        #Left Side Text
+        self.title_label = ctk.CTkLabel(self.main_container, text="super market", font=("Arial Bold", 60), text_color="#1a1a1a")
+        self.title_label.pack(pady=(30, 10), padx=50, anchor="nw")
         
-        # treeview styling
-        style = ttk.Style()
-        style.theme_use("clam")
-        style.configure("Treeview", rowheight=30, background="white", font=("Arial", 12))
-        style.configure("Treeview.Heading", background="#E0E0E0", font=("Arial", 12, "bold"))
+        #Left Side Scroll
+        self.scroll_frame = ctk.CTkScrollableFrame(self.main_container, fg_color="transparent")
+        self.scroll_frame.pack(fill="both", expand=True, padx=40, pady=10)
 
-        cols = ("Name", "Price", "Qty", "Total")
-        self.tree = ttk.Treeview(tbl_fr, columns=cols, show="headings")
-        for c in cols:
-            self.tree.heading(c, text=c)
-            w = 150 if c == "Name" else 80
-            self.tree.column(c, width=w)
-        self.tree.pack(fill="both", expand=True)
-
-        # total row
-        tot_fr = ctk.CTkFrame(self.main_fr, fg_color="#E0E0E0", height=60)
-        tot_fr.pack(fill="x", padx=20, pady=20)
+        # --- RIGHT SIDE (CART) ---
+        self.cart_frame = ctk.CTkFrame(self, fg_color="#1e1e1e", width=350, corner_radius=30)
+        self.cart_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
+        self.cart_frame.grid_propagate(False)
         
-        ctk.CTkLabel(tot_fr, text="Total:", font=("Arial", 16), text_color="black").pack(side="left", padx=20)
-        self.lbl_tot = ctk.CTkLabel(tot_fr, text="0.0 EGP", font=("Arial", 24, "bold"), text_color=C_SIDE)
-        self.lbl_tot.pack(side="right", padx=20)
-
-        # save button
-        ctk.CTkButton(self.main_fr, text="Print Receipt", fg_color="#C0392B", hover_color="#A93226", command=self.print_rec).pack(fill="x", padx=20, pady=(0,20))
-
-        # 3. Receipt Preview (Right side)
-        rec_fr = ctk.CTkFrame(self, width=280, corner_radius=0, fg_color="#FAF9F6")
-        rec_fr.grid(row=0, column=2, sticky="nsew", padx=(2,0))
+        #Right Side Text
+        self.cart_label = ctk.CTkLabel(self.cart_frame, text="CART", font=("Arial Bold", 28))
+        self.cart_label.pack(pady=(40, 20))
         
-        ctk.CTkLabel(rec_fr, text="Receipt Preview", font=("Arial", 18, "bold"), text_color=C_SIDE).pack(pady=20)
-        self.txt_rec = ctk.CTkTextbox(rec_fr, fg_color="white", text_color="black", font=("Courier", 12))
-        self.txt_rec.pack(fill="both", expand=True, padx=15, pady=10)
-        self.txt_rec.configure(state="disabled")
+        #Right Side Scroll
+        self.cart_items_container = ctk.CTkScrollableFrame(self.cart_frame, fg_color="transparent")
+        self.cart_items_container.pack(fill="both", expand=True, padx=10)
+        
+        #Total Label
+        self.total_price_label = ctk.CTkLabel(self.cart_frame, text="Total: 0 EP", font=("Arial Bold", 22), text_color="#7EE37E")
+        self.total_price_label.pack(side="bottom", pady=(10, 5))
 
-    def load_products(self):
-        # fill combobox from main list
-        p_names = [p.name for p in LISTOFPRODUCTS]
-        self.combo.configure(values=p_names)
-        if p_names: self.prod_var.set(p_names[0])
+        self.checkout_btn = ctk.CTkButton(self.cart_frame, text="Check out", 
+                                          fg_color="#7EE37E", text_color="black",
+                                          hover_color="#6BC96B", height=45, corner_radius=12,
+                                          font=("Arial Bold", 15), command=self.process_checkout)
+        self.checkout_btn.pack(side="bottom", fill="x", padx=25, pady=20)
 
-    def add_item(self):
-        name = self.prod_var.get()
-        # simple search
-        found = next((p for p in LISTOFPRODUCTS if p.name == name), None)
-        if found:
-            self.cart.addProduct(found, 1)
-            self.refresh_ui()
+        self.draw_product_grid()
 
-    def refresh_ui(self):
-        # clean table
-        for item in self.tree.get_children():
-            self.tree.delete(item)
+    def update_total_display(self):
+        current_total = self.cart_logic.update_total()
+        self.total_price_label.configure(text=f"Total: {current_total} EP")
+
+    def draw_product_grid(self):
+        num_columns = 4
+        for i, p in enumerate(m.LISTOFPRODUCTS): 
+            r, c = i // num_columns, i % num_columns
+            card = ctk.CTkFrame(self.scroll_frame, fg_color="#242424", width=180, height=280, corner_radius=15)
+            card.grid(row=r, column=c, padx=12, pady=12)
+            card.grid_propagate(False) 
             
-        # get data
-        items, tot = self.cart.getCart()
-        for i, d in items.items():
-            row = (d['obj'].name, f"{d['obj'].price}", d['quantity'], f"{d['itemtotal']}")
-            self.tree.insert("", "end", values=row)
-            
-        self.lbl_tot.configure(text=f"{tot} EGP")
-        
-        # update preview
-        lines = self.cart.checkout()
-        self.txt_rec.configure(state="normal")
-        self.txt_rec.delete("0.0", "end")
-        for l in lines:
-            self.txt_rec.insert("end", l + "\n")
-        self.txt_rec.configure(state="disabled")
+            ctk.CTkLabel(card, text=p.name, font=("Arial Bold", 25)).pack(pady=(20, 5))
+            ctk.CTkLabel(card, text=p.desc, font=("Arial", 17), text_color="#888888", wraplength=140).pack()
+            ctk.CTkLabel(card, text=f"{p.price} EP", font=("Arial Bold", 20), text_color="#7EE37E").pack(pady=5)
+            ctk.CTkFrame(card,width=170,height=20, fg_color="transparent").pack()
+            ctk.CTkButton(card, text="Add to cart", fg_color="#D9D9D9", text_color="#1a1a1a", 
+                          hover_color="#6BC96B", width=120, height=35, corner_radius=8,
+                          command=lambda prod=p: self.add_to_cart_ui(prod)).pack(side="bottom", pady=15)
 
-    def print_rec(self):
-        self.cart.saveReceipt()
+    def add_to_cart_ui(self, product):
+        if product.id in self.cart_rows:
+            self.cart_rows[product.id](1)
+        else:
+            self.cart_logic.addProduct(product, 1)
+            self.create_cart_item_row(product)
+        self.update_total_display()
+
+    def create_cart_item_row(self, product):
+        item_row = ctk.CTkFrame(self.cart_items_container, fg_color="#D9D9D9", height=45, corner_radius=10)
+        item_row.pack(fill="x", padx=5, pady=6)
+        item_row.pack_propagate(False)
+
+        count_label = ctk.CTkLabel(item_row, text="1", text_color="black", font=("Arial Bold", 12))
+
+        def update_qty(amount):
+            curr = int(count_label.cget("text"))
+            if amount > 0:
+                self.cart_logic.addProduct(product, 1)
+                count_label.configure(text=str(curr + 1))
+            elif curr > 1:
+                self.cart_logic.removeProduct(product, 1)
+                count_label.configure(text=str(curr - 1))
+            else:
+                self.cart_logic.removeProduct(product, 1)
+                if product.id in self.cart_rows:
+                    del self.cart_rows[product.id]
+                item_row.destroy()
+            self.update_total_display() 
+
+        self.cart_rows[product.id] = update_qty
+
+        ctk.CTkLabel(item_row, text=product.name, text_color="black", font=("Arial Bold", 13)).pack(side="left", padx=10)
+        
+        ctk.CTkButton(item_row, text="🗑", width=25, fg_color="transparent", text_color="black", 
+                      hover_color="#AF3030", 
+                      command=lambda: [self.cart_logic.removeProduct(product, int(count_label.cget("text"))), 
+                                       self.cart_rows.pop(product.id, None), 
+                                       item_row.destroy(),
+                                       self.update_total_display()]).pack(side="right", padx=5)
+        
+        ctk.CTkButton(item_row, text="+", width=25, height=25, fg_color="#1e1e1e", command=lambda: update_qty(1)).pack(side="right", padx=2)
+        count_label.pack(side="right", padx=5)
+        ctk.CTkButton(item_row, text="-", width=25, height=25, fg_color="#1e1e1e", command=lambda: update_qty(-1)).pack(side="right", padx=2)
+
+    def process_checkout(self):
+        success, msg = self.cart_logic.checkout()
+        print("\n".join(msg))
+        if success:
+            for child in self.cart_items_container.winfo_children():
+                child.destroy()
+            self.cart_rows = {}
+            self.update_total_display() 
 
 if __name__ == "__main__":
-    app = SupermarketGUI()
+    app = SuperMarketGUI()
     app.mainloop()

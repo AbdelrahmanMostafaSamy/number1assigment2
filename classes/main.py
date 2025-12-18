@@ -37,36 +37,38 @@ class Stock:
             }
 
         """
-        
-        # basic stock products .
-        self.products: dict = {
-            101: {
-                "obj" : Product(101, "Milk", 300, "1L of milk."),
-                "Quantity" : 25
-            },
+        # the products from the stock.
+        self.products: dict = self.loadDataFromJSONFile()
 
-            102: {
-                "obj": Product(102, "Bread", 250, "White bread loaf."),
-                "Quantity" : 25
-            },
+        # # basic stock products .
+        # self.products: dict = {
+        #     101: {
+        #         "obj" : Product(101, "Milk", 300, "1L of milk."),
+        #         "Quantity" : 25
+        #     },
 
-            103: {
-                "obj": Product(103, "Eggs", 450, "12 eggs."),
-                "Quantity" : 25
-            },
+        #     102: {
+        #         "obj": Product(102, "Bread", 250, "White bread loaf."),
+        #         "Quantity" : 25
+        #     },
 
-            104: {
-                "obj": Product(104, "Butter", 500, "Butter stick."),
-                "Quantity" : 25
-            },
+        #     103: {
+        #         "obj": Product(103, "Eggs", 450, "12 eggs."),
+        #         "Quantity" : 25
+        #     },
 
-            105: {
-                "obj": Product(105, "Soap", 199, "Hand soap."),
-                "Quantity" : 25
-            }
-        }
+        #     104: {
+        #         "obj": Product(104, "Butter", 500, "Butter stick."),
+        #         "Quantity" : 25
+        #     },
 
-    def addProductToStock(self, product: Product, quantity: int = 0) -> bool:
+        #     105: {
+        #         "obj": Product(105, "Soap", 199, "Hand soap."),
+        #         "Quantity" : 25
+        #     }
+        # }
+
+    def addProductToStock(self, product: Product, quantity: int = 0):
         """
             Docstring for addProductToStock
             
@@ -75,69 +77,73 @@ class Stock:
             :type product: Product
             :param quantity: Quantity I have it in the stock.
             :type quantity: int
-            :return: True if the process has finished successfully. 
-            :rtype: bool
         """
 
-        # add the product.
-        self.products[product.id] = {
-            "obj": product,
-            "Quantity" : quantity
-        }
+        # read the data.
+        json_data = self.readJSONData()
 
-        return True
+        # Append new Item to the last data.
+        json_data['stock'][str(product.id)] = {
+                "obj": product.getJson(),
+                "Quantity" : quantity
+            }
 
-    def deleteFromStock(self, id_of_product : int) -> bool:
+        # write the data.
+        self.writeJSONData(json_data)
+    
+    def loadDataFromJSONFile(self) -> dict:
         """
-        Docstring for deleteFromStock
+        Docstring for loadDataFromJSONFile
         
-        :param self: self instance attribute.
-        :param id_of_product: Id that the product have.
-        :type id_of_product: int
-        :return: True if the process has finished successfully.
-        :rtype: bool
+        :param self: Description
+        :return: Dictionary with all data
+        :rtype: dict
         """
+        
+        # A dict to add the products from the stock.
+        products = {}
 
-        if id_of_product in self.products.keys():
-            self.products.pop(id_of_product)
-            return True
-        else:
-            return False
+        # get the stock.
+        products_in_json_data = self.readJSONData()['stock']
 
-    def updateProduct(self, id_of_product: int, name: str = "", price: int = 0, desc: str = "") -> bool:
+        # iterate on the stock dict to store it in the products dict.
+        for key, value in products_in_json_data.items():
+            products[int(key)] = {
+                "obj" : Product(value.get('id'), value.get('name'), value.get('price'), value.get('desc')),
+                "Quantity" : products_in_json_data[key]["Quantity"]
+            }
+
+        # return the products you have in the stock.
+        return products
+
+
+
+    def readJSONData(self) -> dict:
         """
-        Docstring for updateProduct
+        Docstring for readJSONData
         
         :param self: self instance attribute
-        :param name: name you want to update the product.
-        :type name: str
-        :param price: Price you want to update it.
-        :type price: int
-        :param desc: Description you want to update it.
-        :type desc: str
-        :return: True if the process has finished successfully.
-        :rtype: bool
+        :return: Dictionary with all data in the json file.
+        :rtype: dict
         """
-        # Check if the id of product , already i have or not.
-        if id_of_product in self.products.keys():
-            if name != "":
-                # update the name of product if the user entered value.
-                self.products[id_of_product]["obj"].name = name
-            
-            if price != 0:
-                # update the price of product if the user entered value.
-                self.products[id_of_product]["obj"].price = price
+        # Read the data from the json file.
+        with open("classes/data.json", 'r') as json_file:
+            json_data = json.load(json_file)
 
-            if desc != "":
-                # update the desc of product if the user entered value.
-                self.products[id_of_product]["obj"].desc = desc
-            
-            # True if the process has finished successfully.
-            return True
+        # return the data.
+        return json_data    
+
+    def writeJSONData(self, json_data: dict) -> None:
+        """
+        Docstring for writeJSONData
         
-        else:
-            # False if the process has finished with failed.
-            return False
+        :param self: self instance attribute
+        """
+
+        # save the new item into the json file .
+        with open("classes/data.json", "w") as json_file:
+            json.dump(json_data, json_file, default=str)
+
 
     def getQuantity(self, id_of_product: int) -> int:
         """
@@ -188,6 +194,7 @@ class Cart:
     #     }
         self.items = {}
         self.total = 0
+        self.stockobj = Stock()
 
     def getCart(self):
         return self.items, self.total
@@ -231,10 +238,12 @@ class Cart:
             if not found return --> True 
 
         """
-        with open("classes/data.json", "r") as fp:
-            jdata = json.load(fp)
+        # with open("classes/data.json", "r") as fp:
+        #     jdata = json.load(fp)
 
-        return serial_number not in jdata["history"].keys()
+        json_data = self.stockobj.readJSONData()
+
+        return serial_number not in json_data["history"].keys()
 
     def saveReceipt(self, serial_number, msgs) -> None:
         """
@@ -246,7 +255,7 @@ class Cart:
             This function is created to save the receipt.
         """
 
-
+        print("I here")
         date = datetime.now().strftime("%d %b %Y")
         
         # create a txt file that have a receipt.
@@ -255,9 +264,7 @@ class Cart:
             for line in msgs:
                 receipt.write(line + "\n")
 
-            receipt.close()
-
-        #save history to json
+        # save history to json
         with open("classes/data.json", "r+") as fp:
             jdata = json.load(fp)
 
@@ -280,8 +287,9 @@ class Cart:
             Docstring for checkout
             
             :param self: instance attribute
-            :return: list of all statement in the receipt 
-            :return type: list
+            :return: True for success, False for quantity error 
+            list of all statement in the receipt 
+            :return type: bool, list
         """
         # list to strore all Statement.
         msgs = []
@@ -317,18 +325,31 @@ class Cart:
             quantity = self.items[id]["quantity"]
             itemtotal = self.items[id]['item_total']
             desc = self.items[id]["obj"].desc
+
+            #check if quantity is in stock
+            if quantity <= self.stockobj.getQuantity(id):
+                #update stock
+                newquantity = self.stockobj.getQuantity(id) - quantity
+                self.stockobj.setQuantity(id, newquantity)
+            else:
+                return False, [f"Error: Not enough quantity for product ID {id} - {name} in stock."]
             
             # append every row in the receipt.
             msgs.append(f"{name:<8}{str(price)+"$":<6}{quantity:<10}{itemtotal:<10}{desc:<20}")
         
         msgs.append(f"-" * 60)
-        
         msgs.append("{:<24}{}".format("Final Total", self.total))
         
         #save reciept and add to history
         self.saveReceipt(serial_number, msgs)
 
-        return msgs 
+        #reset cart
+        self.items = {}
+        self.total = 0
+
+
+        #Success
+        return True, msgs 
 
 
 LISTOFPRODUCTS = [
@@ -339,18 +360,20 @@ LISTOFPRODUCTS = [
     Product(106, "Soap", 199, "Hand soap.")
 ]
 
-my_cart = Cart()
-my_cart.addProduct(LISTOFPRODUCTS[0], 100)
-my_cart.addProduct(LISTOFPRODUCTS[2], 150)
-my_cart.addProduct(LISTOFPRODUCTS[3], 300)
-my_cart.addProduct(LISTOFPRODUCTS[1], 200)
-print(my_cart.items)
-my_cart.checkout()
+# my_cart = Cart()
+# my_cart.addProduct(LISTOFPRODUCTS[0], 100)
+# my_cart.addProduct(LISTOFPRODUCTS[2], 150)
+# my_cart.addProduct(LISTOFPRODUCTS[3], 300)
+# my_cart.addProduct(LISTOFPRODUCTS[1], 200)
+
+# print(my_cart.checkout())
 
 # my_cart.saveReceipt()
 
 # my_stock = Stock()
-# my_stock.addProductToStock(Product(106, "Soap", 199, "Hand soap."), 30)
+# my_stock.addProductToStock(Product(107, "Butter", 199, "B."), 30)
+# my_stock.loadDataFromJSONFile()
+
 # my_stock.deleteFromStock(1000)
 # my_stock.updateProduct(103, "Chipes", 350, "Lol")
 
