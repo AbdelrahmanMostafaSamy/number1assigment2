@@ -1,5 +1,5 @@
 import customtkinter as ctk
-import classes.main as m
+import main as m
 
 class SuperMarketGUI(ctk.CTk):
     def __init__(self):
@@ -59,7 +59,7 @@ class SuperMarketGUI(ctk.CTk):
 
     def draw_product_grid(self):
         num_columns = 4
-        for i, p in enumerate(m.LISTOFPRODUCTS):
+        for i, p in enumerate(m.LISTOFPRODUCTS): 
             r, c = i // num_columns, i % num_columns
             card = ctk.CTkFrame(self.scroll_frame, fg_color="#242424", width=180, height=280, corner_radius=15)
             card.grid(row=r, column=c, padx=12, pady=12)

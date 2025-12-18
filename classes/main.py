@@ -37,34 +37,36 @@ class Stock:
             }
 
         """
-        
-        # basic stock products .
-        self.products: dict = {
-            101: {
-                "obj" : Product(101, "Milk", 300, "1L of milk."),
-                "Quantity" : 25
-            },
+        # the products from the stock.
+        self.products: dict = self.loadDataFromJSONFile()
 
-            102: {
-                "obj": Product(102, "Bread", 250, "White bread loaf."),
-                "Quantity" : 25
-            },
+        # # basic stock products .
+        # self.products: dict = {
+        #     101: {
+        #         "obj" : Product(101, "Milk", 300, "1L of milk."),
+        #         "Quantity" : 25
+        #     },
 
-            103: {
-                "obj": Product(103, "Eggs", 450, "12 eggs."),
-                "Quantity" : 25
-            },
+        #     102: {
+        #         "obj": Product(102, "Bread", 250, "White bread loaf."),
+        #         "Quantity" : 25
+        #     },
 
-            104: {
-                "obj": Product(104, "Butter", 500, "Butter stick."),
-                "Quantity" : 25
-            },
+        #     103: {
+        #         "obj": Product(103, "Eggs", 450, "12 eggs."),
+        #         "Quantity" : 25
+        #     },
 
-            105: {
-                "obj": Product(105, "Soap", 199, "Hand soap."),
-                "Quantity" : 25
-            }
-        }
+        #     104: {
+        #         "obj": Product(104, "Butter", 500, "Butter stick."),
+        #         "Quantity" : 25
+        #     },
+
+        #     105: {
+        #         "obj": Product(105, "Soap", 199, "Hand soap."),
+        #         "Quantity" : 25
+        #     }
+        # }
 
     def addProductToStock(self, product: Product, quantity: int = 0):
         """
@@ -77,10 +79,8 @@ class Stock:
             :type quantity: int
         """
 
-        # Read the File data.
-        with open("classes/data.json", "r") as json_file:
-            json_data = json.load(json_file)
-
+        # read the data.
+        json_data = self.readJSONData()
 
         # Append new Item to the last data.
         json_data['stock'][str(product.id)] = {
@@ -88,63 +88,62 @@ class Stock:
                 "Quantity" : quantity
             }
 
+        # write the data.
+        self.writeJSONData(json_data)
+    
+    def loadDataFromJSONFile(self) -> dict:
+        """
+        Docstring for loadDataFromJSONFile
+        
+        :param self: Description
+        :return: Dictionary with all data
+        :rtype: dict
+        """
+        
+        # A dict to add the products from the stock.
+        products = {}
+
+        # get the stock.
+        products_in_json_data = self.readJSONData()['stock']
+
+        # iterate on the stock dict to store it in the products dict.
+        for key, value in products_in_json_data.items():
+            products[int(key)] = {
+                "obj" : Product(value.get('id'), value.get('name'), value.get('price'), value.get('desc')),
+                "Quantity" : products_in_json_data[key]["Quantity"]
+            }
+
+        # return the products you have in the stock.
+        return products
+
+
+
+    def readJSONData(self) -> dict:
+        """
+        Docstring for readJSONData
+        
+        :param self: self instance attribute
+        :return: Dictionary with all data in the json file.
+        :rtype: dict
+        """
+        # Read the data from the json file.
+        with open("classes/data.json", 'r') as json_file:
+            json_data = json.load(json_file)
+
+        # return the data.
+        return json_data    
+
+    def writeJSONData(self, json_data: dict) -> None:
+        """
+        Docstring for writeJSONData
+        
+        :param self: self instance attribute
+        """
 
         # save the new item into the json file .
         with open("classes/data.json", "w") as json_file:
             json.dump(json_data, json_file, default=str)
 
-
-    def deleteFromStock(self, id_of_product : int) -> bool:
-        """
-        Docstring for deleteFromStock
-        
-        :param self: self instance attribute.
-        :param id_of_product: Id that the product have.
-        :type id_of_product: int
-        :return: True if the process has finished successfully.
-        :rtype: bool
-        """
-
-        if id_of_product in self.products.keys():
-            self.products.pop(id_of_product)
-            return True
-        else:
-            return False
-
-    def updateProduct(self, id_of_product: int, name: str = "", price: int = 0, desc: str = "") -> bool:
-        """
-        Docstring for updateProduct
-        
-        :param self: self instance attribute
-        :param name: name you want to update the product.
-        :type name: str
-        :param price: Price you want to update it.
-        :type price: int
-        :param desc: Description you want to update it.
-        :type desc: str
-        :return: True if the process has finished successfully.
-        :rtype: bool
-        """
-        # Check if the id of product , already i have or not.
-        if id_of_product in self.products.keys():
-            if name != "":
-                # update the name of product if the user entered value.
-                self.products[id_of_product]["obj"].name = name
-            
-            if price != 0:
-                # update the price of product if the user entered value.
-                self.products[id_of_product]["obj"].price = price
-
-            if desc != "":
-                # update the desc of product if the user entered value.
-                self.products[id_of_product]["obj"].desc = desc
-            
-            # True if the process has finished successfully.
-            return True
-        
-        else:
-            # False if the process has finished with failed.
-            return False
 
     def getQuantity(self, id_of_product: int) -> int:
         """
@@ -372,7 +371,9 @@ LISTOFPRODUCTS = [
 # my_cart.saveReceipt()
 
 my_stock = Stock()
-my_stock.addProductToStock(Product(106, "Soap", 199, "Hand soap."), 30)
+# my_stock.addProductToStock(Product(107, "Butter", 199, "B."), 30)
+my_stock.loadDataFromJSONFile()
+
 # my_stock.deleteFromStock(1000)
 # my_stock.updateProduct(103, "Chipes", 350, "Lol")
 

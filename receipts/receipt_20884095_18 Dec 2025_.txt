@@ -1,0 +1,10 @@
+------------------------------------------------------------
+Super Market Receipt
+Serial Number: 20884095
+Date: Thursday, 18-December-2025
+Time: 06:46:58 PM
+------------------------------------------------------------
+Name    Price Quantity  Total     Desc                
+Butter  500$  9         4500      Butter stick.       
+------------------------------------------------------------
+Final Total             4500
