@@ -90,6 +90,8 @@ class Stock:
 
         # write the data.
         self.writeJSONData(json_data)
+
+        self.products: dict = self.loadDataFromJSONFile()
     
     def loadDataFromJSONFile(self) -> dict:
         """
