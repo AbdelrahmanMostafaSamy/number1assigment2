@@ -66,7 +66,7 @@ class Stock:
             }
         }
 
-    def addProductToStock(self, product: Product, quantity: int = 0) -> bool:
+    def addProductToStock(self, product: Product, quantity: int = 0):
         """
             Docstring for addProductToStock
             
@@ -75,17 +75,24 @@ class Stock:
             :type product: Product
             :param quantity: Quantity I have it in the stock.
             :type quantity: int
-            :return: True if the process has finished successfully. 
-            :rtype: bool
         """
 
-        # add the product.
-        self.products[product.id] = {
-            "obj": product,
-            "Quantity" : quantity
-        }
+        # Read the File data.
+        with open("classes/data.json", "r") as json_file:
+            json_data = json.load(json_file)
 
-        return True
+
+        # Append new Item to the last data.
+        json_data['stock'][str(product.id)] = {
+                "obj": product.getJson(),
+                "Quantity" : quantity
+            }
+
+
+        # save the new item into the json file .
+        with open("classes/data.json", "w") as json_file:
+            json.dump(json_data, json_file, default=str)
+
 
     def deleteFromStock(self, id_of_product : int) -> bool:
         """
@@ -354,18 +361,18 @@ LISTOFPRODUCTS = [
     Product(106, "Soap", 199, "Hand soap.")
 ]
 
-my_cart = Cart()
-my_cart.addProduct(LISTOFPRODUCTS[0], 100)
-my_cart.addProduct(LISTOFPRODUCTS[2], 150)
-my_cart.addProduct(LISTOFPRODUCTS[3], 300)
-my_cart.addProduct(LISTOFPRODUCTS[1], 200)
-print(my_cart.items)
-my_cart.checkout()
+# my_cart = Cart()
+# my_cart.addProduct(LISTOFPRODUCTS[0], 100)
+# my_cart.addProduct(LISTOFPRODUCTS[2], 150)
+# my_cart.addProduct(LISTOFPRODUCTS[3], 300)
+# my_cart.addProduct(LISTOFPRODUCTS[1], 200)
+# print(my_cart.items)
+# my_cart.checkout()
 
 # my_cart.saveReceipt()
 
-# my_stock = Stock()
-# my_stock.addProductToStock(Product(106, "Soap", 199, "Hand soap."), 30)
+my_stock = Stock()
+my_stock.addProductToStock(Product(106, "Soap", 199, "Hand soap."), 30)
 # my_stock.deleteFromStock(1000)
 # my_stock.updateProduct(103, "Chipes", 350, "Lol")
 
