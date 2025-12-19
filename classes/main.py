@@ -130,7 +130,7 @@ class Stock:
         :rtype: dict
         """
         # Read the data from the json file.
-        with open("classes/data.json", 'r') as json_file:
+        with open("classes/data.json", 'r', encoding="utf-8") as json_file:
             json_data = json.load(json_file)
 
         # return the data.
@@ -144,7 +144,7 @@ class Stock:
         """
 
         # save the new item into the json file .
-        with open("classes/data.json", "w") as json_file:
+        with open("classes/data.json", "w", encoding="utf-8") as json_file:
             json.dump(json_data, json_file, default=str)
 
 
@@ -241,12 +241,10 @@ class Cart:
             if not found return --> True 
 
         """
-        # with open("classes/data.json", "r") as fp:
-        #     jdata = json.load(fp)
 
         json_data = self.stockobj.readJSONData()
 
-        return serial_number not in json_data["history"].keys()
+        return serial_number not in json_data["listofserials"]
 
     def saveReceipt(self, serial_number, msgs) -> None:
         """
@@ -261,26 +259,17 @@ class Cart:
         date = datetime.now().strftime("%d %b %Y")
         
         # create a txt file that have a receipt.
-        with open(f"receipts/receipt_{serial_number}_{date}_.txt", 'w') as receipt:
+        with open(f"receipts/receipt_{serial_number}_{date}_.txt", 'w', encoding="utf-8") as receipt:
 
             for line in msgs:
                 receipt.write(line + "\n")
 
-        # save history to json
-        with open("classes/data.json", "r+") as fp:
-            jdata = json.load(fp)
+        # save serial number to json
+        jdata = self.stockobj.readJSONData()
 
-        historyitems = []
-        for i in self.items.values():
-            prod = i['obj'].getJson()
-            prod.update({'quantity': i['quantity'], 'item_total': i['item_total']})
+        jdata['listofserials'].append(serial_number)
 
-            historyitems.append(prod)
-
-        jdata['history'][serial_number] = historyitems
-
-        with open("classes/data.json", "w") as fp:
-            json.dump(jdata, fp)
+        jdata = self.stockobj.writeJSONData(jdata)
 
             
 
@@ -306,12 +295,17 @@ class Cart:
 
         date = datetime.now().strftime("%A, %d-%B-%Y")
         time = datetime.now().strftime("%I:%M:%S %p")
+        reciept_ids = self.stockobj.readJSONData().get("listofserials", 0)
 
         # add separator. 
         msgs.append(f"-" * 60)
 
         # append the basic information about the receipt.
-        msgs.append(f"Super Market Receipt\nSerial Number: {serial_number}\nDate: {date}\nTime: {time}")
+        msgs.append(f"""Super Market Receipt\
+                    \nID: {len(reciept_ids) + 1}\
+                    \nSerial Number: {serial_number}\
+                    \nDate: {date}\
+                    \nTime: {time}""")
         
         # add separator. 
         msgs.append(f"-" * 60)
@@ -357,19 +351,16 @@ class Cart:
         return True, msgs 
 
 
-LISTOFPRODUCTS = [
-    Product(101, "Milk", 300, "1L of milk."),
-    Product(102, "Bread", 250, "White bread loaf."),
-    Product(103, "Eggs", 450, "12 eggs."),
-    Product(104, "Butter", 500, "Butter stick."),
-    Product(106, "Soap", 199, "Hand soap.")
-]
+# LISTOFPRODUCTS = [
+#     Product(101, "milk", 300, "1L of milk."),
+#     Product(102, "Bread", 250, "White bread loaf."),
+#     Product(103, "Eggs", 450, "12 eggs."),
+#     Product(104, "Butter", 500, "Butter stick."),
+#     Product(106, "Soap", 199, "Hand soap.")
+# ]
 
 # my_cart = Cart()
-# my_cart.addProduct(LISTOFPRODUCTS[0], 100)
-# my_cart.addProduct(LISTOFPRODUCTS[2], 150)
-# my_cart.addProduct(LISTOFPRODUCTS[3], 300)
-# my_cart.addProduct(LISTOFPRODUCTS[1], 200)
+# my_cart.addProduct(LISTOFPRODUCTS[0], 10)
 
 # print(my_cart.checkout())
 
