@@ -1,8 +1,0 @@
-------------------------------------------------------------
-Super Market Receipt                    
-ID: 6                    
-Serial Number: 14826704                    
-Date: Friday, 19-December-2025                    
-Time: 07:41:16 PM
-------------------------------------------------------------
-Name    Price Quantity  Total     Desc                
