@@ -328,10 +328,13 @@ class Cart:
             itemtotal = self.items[id]['item_total']
             desc = self.items[id]["obj"].desc
 
+            # get the quantity of product from the stock 
+            stock_quantity = self.stockobj.getQuantity(id)
+
             #check if quantity is in stock
-            if quantity <= self.stockobj.getQuantity(id):
+            if quantity <= stock_quantity:
                 #update stock
-                newquantity = self.stockobj.getQuantity(id) - quantity
+                newquantity = stock_quantity - quantity
                 self.stockobj.setQuantity(id, newquantity)
             else:
                 return False, [f"Error: Not enough quantity for product ID {id} - {name} in stock."]
