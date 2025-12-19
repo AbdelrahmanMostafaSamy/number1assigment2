@@ -23,7 +23,7 @@ class SuperMarketGUI(ctk.CTk):
         self.main_container.grid(row=0, column=0, sticky="nsew")
         
         #Left Side Text
-        self.title_label = ctk.CTkLabel(self.main_container, text="super market", font=("Arial Bold", 60), text_color="#1a1a1a")
+        self.title_label = ctk.CTkLabel(self.main_container, text="سوبرماركت", font=("Arial Bold", 60), text_color="#1a1a1a")
         self.title_label.pack(pady=(30, 10), padx=50, anchor="nw")
         
         #Left Side Scroll
@@ -36,7 +36,7 @@ class SuperMarketGUI(ctk.CTk):
         self.cart_frame.grid_propagate(False)
         
         #Right Side Text
-        self.cart_label = ctk.CTkLabel(self.cart_frame, text="CART", font=("Arial Bold", 28))
+        self.cart_label = ctk.CTkLabel(self.cart_frame, text="السلة", font=("Arial Bold", 28))
         self.cart_label.pack(pady=(40, 20))
         
         #Right Side Scroll
@@ -47,7 +47,7 @@ class SuperMarketGUI(ctk.CTk):
         self.total_price_label = ctk.CTkLabel(self.cart_frame, text="Total: 0 EGP", font=("Arial Bold", 22), text_color="#7EE37E")
         self.total_price_label.pack(side="bottom", pady=(10, 5))
 
-        self.checkout_btn = ctk.CTkButton(self.cart_frame, text="Check out", 
+        self.checkout_btn = ctk.CTkButton(self.cart_frame, text="شراء", 
                                           fg_color="#7EE37E", text_color="black",
                                           hover_color="#6BC96B", height=45, corner_radius=12,
                                           font=("Arial Bold", 15), command=self.process_checkout)
@@ -73,7 +73,7 @@ class SuperMarketGUI(ctk.CTk):
             ctk.CTkLabel(card, text=product.desc, font=("Arial", 17), text_color="#888888", wraplength=140).pack()
             ctk.CTkLabel(card, text=f"{product.price} EGP", font=("Arial Bold", 20), text_color="#7EE37E").pack(pady=5)
             ctk.CTkFrame(card,width=170,height=20, fg_color="transparent").pack()
-            ctk.CTkButton(card, text="Add to cart", fg_color="#D9D9D9", text_color="#1a1a1a", 
+            ctk.CTkButton(card, text="اضافة", fg_color="#D9D9D9", text_color="#1a1a1a", 
                           hover_color="#6BC96B", width=120, height=35, corner_radius=8,font=("Arial Bold", 15),
                           command=lambda prod=product: self.add_to_cart_ui(prod)).pack(side="bottom", pady=15)
 
@@ -130,7 +130,7 @@ class SuperMarketGUI(ctk.CTk):
                 child.destroy()
             self.cart_rows = {}
             self.update_total_display()
-            CTkMessagebox(title="تحقق", message= "تم اصدار الكوبون بنجاح", icon="check" , font=("Arial",22,"bold"))
+            CTkMessagebox(title="تحقق", message= "تم اصدار الفاتورة بنجاح", icon="check" , font=("Arial",22,"bold"))
             winsound.MessageBeep(winsound.MB_OK)
         else:
             CTkMessagebox(title="خطأ", message=msg , icon="cancel",font=("Arial",22,"bold"))

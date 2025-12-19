@@ -15,7 +15,8 @@ def add_products():
         print("product id already exists")
         return
 
-    name = input("Enter product name: ")
+    name = input("Enter product name in arabic: ")
+    name_en = input("Enter product name in english: ")
 
     price = int(input("Enter product price: "))
 
@@ -23,7 +24,7 @@ def add_products():
 
     quantity = int(input("Enter product quantity:"))
 
-    newProduct = Product(id, name, price, desc)
+    newProduct = Product(id, [name, name_en], price, desc)
 
     stock.addProductToStock(newProduct, quantity)
     print("Product added successfully")

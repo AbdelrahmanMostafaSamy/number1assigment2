@@ -2,21 +2,24 @@ from random import randint
 from datetime import datetime
 import json
 import os
+import arabic_reshaper
+from bidi.algorithm import get_display
 
 #os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 class Product:
-    def __init__(self, prod_id: int, prod_name: str, prod_price: int, prod_desc: str)-> None:
+    def __init__(self, prod_id: int, prod_name: list, prod_price: int, prod_desc: str)-> None:
         self.id     = prod_id
-        self.name   = prod_name
+        self.name   = prod_name[0]
+        self.name_en = prod_name[1]
         self.price  = prod_price
         self.desc   = prod_desc
 
     def getJson(self):
-        return {'id': self.id, 'name': self.name, "price": self.price, "desc": self.desc}
+        return {'id': self.id, 'name': self.name, 'name_en': self.name_en, "price": self.price, "desc": self.desc}
     
     def loadJson(self, data):
-        return Product(data.get('id'), data.get('name'), data.get('price'), data.get('desc'))
+        return Product(data.get('id'), [data.get('name'), data.get('name_en')], data.get('price'), data.get('desc'))
     
 
 class Stock:
@@ -112,7 +115,7 @@ class Stock:
         # iterate on the stock dict to store it in the products dict.
         for key, value in products_in_json_data.items():
             products[int(key)] = {
-                "obj" : Product(value["obj"]["id"], value["obj"]["name"], value["obj"]["price"], value["obj"]["desc"]),
+                "obj" : Product(value["obj"]["id"], [value["obj"]["name"][0], value["obj"]["name"][1]], value["obj"]["price"], value["obj"]["desc"]),
                 "Quantity" : products_in_json_data[key]["Quantity"]
             }
 
@@ -130,7 +133,7 @@ class Stock:
         :rtype: dict
         """
         # Read the data from the json file.
-        with open("classes/data.json", 'r') as json_file:
+        with open("classes/data.json", 'r', encoding="utf-8") as json_file:
             json_data = json.load(json_file)
 
         # return the data.
@@ -144,7 +147,7 @@ class Stock:
         """
 
         # save the new item into the json file .
-        with open("classes/data.json", "w") as json_file:
+        with open("classes/data.json", "w", encoding="utf-8") as json_file:
             json.dump(json_data, json_file, default=str)
 
 
@@ -241,12 +244,10 @@ class Cart:
             if not found return --> True 
 
         """
-        # with open("classes/data.json", "r") as fp:
-        #     jdata = json.load(fp)
 
         json_data = self.stockobj.readJSONData()
 
-        return serial_number not in json_data["history"].keys()
+        return serial_number not in json_data["listofserials"]
 
     def saveReceipt(self, serial_number, msgs) -> None:
         """
@@ -261,26 +262,17 @@ class Cart:
         date = datetime.now().strftime("%d %b %Y")
         
         # create a txt file that have a receipt.
-        with open(f"receipts/receipt_{serial_number}_{date}_.txt", 'w') as receipt:
+        with open(f"receipts/receipt_{serial_number}_{date}_.txt", 'w', encoding="utf-8") as receipt:
 
             for line in msgs:
                 receipt.write(line + "\n")
 
-        # save history to json
-        with open("classes/data.json", "r+") as fp:
-            jdata = json.load(fp)
+        # save serial number to json
+        jdata = self.stockobj.readJSONData()
 
-        historyitems = []
-        for i in self.items.values():
-            prod = i['obj'].getJson()
-            prod.update({'quantity': i['quantity'], 'item_total': i['item_total']})
+        jdata['listofserials'].append(serial_number)
 
-            historyitems.append(prod)
-
-        jdata['history'][serial_number] = historyitems
-
-        with open("classes/data.json", "w") as fp:
-            json.dump(jdata, fp)
+        jdata = self.stockobj.writeJSONData(jdata)
 
             
 
@@ -306,12 +298,17 @@ class Cart:
 
         date = datetime.now().strftime("%A, %d-%B-%Y")
         time = datetime.now().strftime("%I:%M:%S %p")
+        reciept_ids = self.stockobj.readJSONData().get("listofserials", 0)
 
         # add separator. 
         msgs.append(f"-" * 60)
 
         # append the basic information about the receipt.
-        msgs.append(f"Super Market Receipt\nSerial Number: {serial_number}\nDate: {date}\nTime: {time}")
+        msgs.append(f"""Super Market Receipt\
+                    \nID: {len(reciept_ids) + 1}\
+                    \nSerial Number: {serial_number}\
+                    \nDate: {date}\
+                    \nTime: {time}""")
         
         # add separator. 
         msgs.append(f"-" * 60)
@@ -322,7 +319,7 @@ class Cart:
 
         for id in self.items:
             # get the data from the list:
-            name = self.items[id]["obj"].name
+            name = self.items[id]["obj"].name_en
             price = self.items[id]["obj"].price
             quantity = self.items[id]["quantity"]
             itemtotal = self.items[id]['item_total']
@@ -357,21 +354,11 @@ class Cart:
         return True, msgs 
 
 
-LISTOFPRODUCTS = [
-    Product(101, "Milk", 300, "1L of milk."),
-    Product(102, "Bread", 250, "White bread loaf."),
-    Product(103, "Eggs", 450, "12 eggs."),
-    Product(104, "Butter", 500, "Butter stick."),
-    Product(106, "Soap", 199, "Hand soap.")
-]
 
-# my_cart = Cart()
-# my_cart.addProduct(LISTOFPRODUCTS[0], 100)
-# my_cart.addProduct(LISTOFPRODUCTS[2], 150)
-# my_cart.addProduct(LISTOFPRODUCTS[3], 300)
-# my_cart.addProduct(LISTOFPRODUCTS[1], 200)
+my_cart = Cart()
+my_cart.addProduct(my_cart.stockobj.products[101]['obj'], 10)
 
-# print(my_cart.checkout())
+my_cart.checkout()
 
 # my_cart.saveReceipt()
 
