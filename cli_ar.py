@@ -2,7 +2,6 @@
 from classes.main import Cart
 from classes.main import Stock
 from classes.main import Product
-
 import arabic_reshaper
 
 # -------- Arabic Helper --------
@@ -158,6 +157,3 @@ def main_menu():
             break
         else:
             print(ar("اختيار غير صحيح، حاول مرة أخرى"))
-
-#______________Run Program______________
-main_menu()

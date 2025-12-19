@@ -110,7 +110,7 @@ def view_cart():
 
 #______________Main Menu______________
 # Main Menu
-def prints():
+def main_menu_en():
     while True:
         print("\n__________M A I N   M E N U__________")
         print("1. Add product to store")
@@ -144,5 +144,3 @@ def prints():
             print("Invalid choice, please try again.")
     
 
-# Main loop
-prints()

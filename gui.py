@@ -1,6 +1,6 @@
 import customtkinter as ctk
 from CTkMessagebox import CTkMessagebox
-import main as m
+from classes.main import *
 import winsound
 
 class SuperMarketGUI(ctk.CTk):
@@ -11,7 +11,7 @@ class SuperMarketGUI(ctk.CTk):
         self.resizable(False, False)
         ctk.set_appearance_mode("dark")
 
-        self.cart_logic = m.Cart()
+        self.cart_logic = Cart()
         self.cart_rows = {}
 
         self.grid_columnconfigure(0, weight=1) 
@@ -24,7 +24,7 @@ class SuperMarketGUI(ctk.CTk):
         
         #Left Side Text
         self.title_label = ctk.CTkLabel(self.main_container, text="سوبرماركت", font=("Arial Bold", 60), text_color="#1a1a1a")
-        self.title_label.pack(pady=(30, 10), padx=50, anchor="nw")
+        self.title_label.pack(pady=(30, 10), padx=50, anchor="ne")
         
         #Left Side Scroll
         self.scroll_frame = ctk.CTkScrollableFrame(self.main_container, fg_color="transparent")
@@ -62,7 +62,7 @@ class SuperMarketGUI(ctk.CTk):
 
     def draw_product_grid(self):
         num_columns = 4
-        stock = m.Stock()
+        stock = Stock()
         for i,v in enumerate(stock.products.values()): 
             product = v["obj"]
             r, c = i // num_columns, i % num_columns
@@ -124,7 +124,6 @@ class SuperMarketGUI(ctk.CTk):
 
     def process_checkout(self):
         success, msg = self.cart_logic.checkout()
-        print("\n".join(msg))
         if success:
             for child in self.cart_items_container.winfo_children():
                 child.destroy()
@@ -135,7 +134,3 @@ class SuperMarketGUI(ctk.CTk):
         else:
             CTkMessagebox(title="خطأ", message=msg , icon="cancel",font=("Arial",22,"bold"))
             winsound.MessageBeep(winsound.MB_ICONHAND)
-
-if __name__ == "__main__":
-    app = SuperMarketGUI()
-    app.mainloop()
