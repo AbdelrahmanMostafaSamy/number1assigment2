@@ -1,5 +1,7 @@
 import customtkinter as ctk
-import main as m
+from CTkMessagebox import CTkMessagebox
+import classes.main as m
+import winsound
 
 class SuperMarketGUI(ctk.CTk):
     def __init__(self):
@@ -42,7 +44,7 @@ class SuperMarketGUI(ctk.CTk):
         self.cart_items_container.pack(fill="both", expand=True, padx=10)
         
         #Total Label
-        self.total_price_label = ctk.CTkLabel(self.cart_frame, text="Total: 0 EP", font=("Arial Bold", 22), text_color="#7EE37E")
+        self.total_price_label = ctk.CTkLabel(self.cart_frame, text="Total: 0 EGP", font=("Arial Bold", 22), text_color="#7EE37E")
         self.total_price_label.pack(side="bottom", pady=(10, 5))
 
         self.checkout_btn = ctk.CTkButton(self.cart_frame, text="Check out", 
@@ -55,23 +57,25 @@ class SuperMarketGUI(ctk.CTk):
 
     def update_total_display(self):
         current_total = self.cart_logic.update_total()
-        self.total_price_label.configure(text=f"Total: {current_total} EP")
+        self.total_price_label.configure(text=f"Total: {current_total} EGP")
+
 
     def draw_product_grid(self):
         num_columns = 4
-        for i, p in enumerate(m.LISTOFPRODUCTS): 
+        stock = m.Stock()
+        for i,v in enumerate(stock.products.values()): 
+            product = v["obj"]
             r, c = i // num_columns, i % num_columns
             card = ctk.CTkFrame(self.scroll_frame, fg_color="#242424", width=180, height=280, corner_radius=15)
             card.grid(row=r, column=c, padx=12, pady=12)
             card.grid_propagate(False) 
-            
-            ctk.CTkLabel(card, text=p.name, font=("Arial Bold", 25)).pack(pady=(20, 5))
-            ctk.CTkLabel(card, text=p.desc, font=("Arial", 17), text_color="#888888", wraplength=140).pack()
-            ctk.CTkLabel(card, text=f"{p.price} EP", font=("Arial Bold", 20), text_color="#7EE37E").pack(pady=5)
+            ctk.CTkLabel(card, text=product.name, font=("Arial Bold", 25)).pack(pady=(20, 5))
+            ctk.CTkLabel(card, text=product.desc, font=("Arial", 17), text_color="#888888", wraplength=140).pack()
+            ctk.CTkLabel(card, text=f"{product.price} EGP", font=("Arial Bold", 20), text_color="#7EE37E").pack(pady=5)
             ctk.CTkFrame(card,width=170,height=20, fg_color="transparent").pack()
             ctk.CTkButton(card, text="Add to cart", fg_color="#D9D9D9", text_color="#1a1a1a", 
-                          hover_color="#6BC96B", width=120, height=35, corner_radius=8,
-                          command=lambda prod=p: self.add_to_cart_ui(prod)).pack(side="bottom", pady=15)
+                          hover_color="#6BC96B", width=120, height=35, corner_radius=8,font=("Arial Bold", 15),
+                          command=lambda prod=product: self.add_to_cart_ui(prod)).pack(side="bottom", pady=15)
 
     def add_to_cart_ui(self, product):
         if product.id in self.cart_rows:
@@ -125,7 +129,12 @@ class SuperMarketGUI(ctk.CTk):
             for child in self.cart_items_container.winfo_children():
                 child.destroy()
             self.cart_rows = {}
-            self.update_total_display() 
+            self.update_total_display()
+            CTkMessagebox(title="تحقق", message= "تم اصدار الكوبون بنجاح", icon="check" , font=("Arial",22,"bold"))
+            winsound.MessageBeep(winsound.MB_OK)
+        else:
+            CTkMessagebox(title="خطأ", message=msg , icon="cancel",font=("Arial",22,"bold"))
+            winsound.MessageBeep(winsound.MB_ICONHAND)
 
 if __name__ == "__main__":
     app = SuperMarketGUI()
