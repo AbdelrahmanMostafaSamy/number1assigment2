@@ -12,7 +12,7 @@ class Product:
         self.desc   = prod_desc
 
     def getJson(self):
-        return {'id': self.id, 'name': self.name, 'name_en': self.name_en, "price": self.price, "desc": self.desc}
+        return {'id': self.id, 'name': [self.name, self.name_en], "price": self.price, "desc": self.desc}
     
     def loadJson(self, data):
         return Product(data.get('id'), [data.get('name'), data.get('name_en')], data.get('price'), data.get('desc'))

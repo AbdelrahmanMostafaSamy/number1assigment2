@@ -134,7 +134,10 @@ def main_menu_en():
         elif choice == "5":
             if not cart.items:
                 print("Cart is empty, cannot checkout.")
-                cart.checkout()
+            if cart.checkout()[0]:
+                print("Receipt exported Successfully")
+            else:
+                print("Error: Quantity is not enough.")
         elif choice == "6":
             view_cart()
         elif choice == "7":

@@ -148,7 +148,7 @@ def main_menu():
                 success, msg = cart.checkout()
                 if success:
                     for line in msg:
-                        print(ar(line))
+                        print(line)
                 else:
                     print(ar(msg))
         elif choice == "6":
