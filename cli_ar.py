@@ -1,4 +1,4 @@
-# from classes.main import LISTOFPRODUCTS
+
 from classes.main import Cart
 from classes.main import Stock
 from classes.main import Product
@@ -8,6 +8,7 @@ import arabic_reshaper
 def ar(text):
     reshaped = arabic_reshaper.reshape(text)
     return reshaped[::-1]
+
 
 cart = Cart()
 stock = Stock()

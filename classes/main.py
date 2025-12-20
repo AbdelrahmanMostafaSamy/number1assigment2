@@ -1,11 +1,7 @@
 from random import randint
 from datetime import datetime
 import json
-import os
-import arabic_reshaper
-from bidi.algorithm import get_display
 
-#os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 class Product:
     def __init__(self, prod_id: int, prod_name: list, prod_price: int, prod_desc: str)-> None:
@@ -42,34 +38,6 @@ class Stock:
         """
         # the products from the stock.
         self.products: dict = self.loadDataFromJSONFile()
-
-        # # basic stock products .
-        # self.products: dict = {
-        #     101: {
-        #         "obj" : Product(101, "Milk", 300, "1L of milk."),
-        #         "Quantity" : 25
-        #     },
-
-        #     102: {
-        #         "obj": Product(102, "Bread", 250, "White bread loaf."),
-        #         "Quantity" : 25
-        #     },
-
-        #     103: {
-        #         "obj": Product(103, "Eggs", 450, "12 eggs."),
-        #         "Quantity" : 25
-        #     },
-
-        #     104: {
-        #         "obj": Product(104, "Butter", 500, "Butter stick."),
-        #         "Quantity" : 25
-        #     },
-
-        #     105: {
-        #         "obj": Product(105, "Soap", 199, "Hand soap."),
-        #         "Quantity" : 25
-        #     }
-        # }
 
     def addProductToStock(self, product: Product, quantity: int = 0):
         """
@@ -342,13 +310,13 @@ class Cart:
         msgs.append(f"-" * 60)
         msgs.append("{:<24}{}".format("Final Total", self.total))
         
-        #save reciept and add to history
+        # save reciept and add to history
         self.saveReceipt(serial_number, msgs)
 
-        #reset cart
+        # reset cart
         self.items = {}
         self.total = 0
 
 
-        #Success
+        # Success
         return True, msgs 
