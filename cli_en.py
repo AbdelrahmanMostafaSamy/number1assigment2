@@ -35,7 +35,7 @@ def display_products():
     print("__________PRODUCTS__________")
     for key, value in stock.products.items():
         print(
-            f"{key} --> {value['obj'].name} | "
+            f"{key} --> {value['obj'].name_en} | "
             f"{value['obj'].price} | "
             f"{value['obj'].desc} | "
             f"{value['Quantity']}"
@@ -69,7 +69,7 @@ def add_to_cart():
     product = stock.products[prod_id]["obj"]
     cart.addProduct(product, quantity)
 
-    print(f"Added {quantity} of {product.name} to cart.")
+    print(f"Added {quantity} of {product.name_en} to cart.")
     return True
 
 #______________Delete From Cart______________
@@ -98,7 +98,7 @@ def view_cart():
         item_total = item["item_total"]
 
         print(
-            f"{pid} --> {product.name} | "
+            f"{pid} --> {product.name_en} | "
             f"{product.price}$ | "
             f"Quantity: {quantity} | "
             f"Subtotal: {item_total}"

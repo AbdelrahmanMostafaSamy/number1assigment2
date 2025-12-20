@@ -43,8 +43,8 @@ def display_products():
 
     for key, value in stock.products.items():
         print(
-            f"{key} --> {value['obj'].name} | "
-            f"{value['obj'].price} جنيه | "
+            f"{key} --> {ar(value['obj'].name)} | "
+            f"{value['obj'].price} {ar("جنيه")} | "
             f"{value['obj'].desc} | "
             f"{ar('الكمية')}: {value['Quantity']}"
         )
